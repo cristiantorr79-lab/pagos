@@ -1,11 +1,13 @@
 package pagos.model;
 
-import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 import pagos.interfaces.Pago;
 
 public class CarroCompra {
-    private ArrayList<Producto> productos = new ArrayList<>();
+
+    private List<Producto> productos = new LinkedList<>();
 
     public void agregarProducto(Producto producto) {
         productos.add(producto);
@@ -15,35 +17,36 @@ public class CarroCompra {
         productos.remove(producto);
     }
 
-    public int calcularTotal() {
-        return productos.stream().map(Producto::getPrecio).reduce(0, Integer::sum);
+    private int calcularTotal() {
+        return productos.stream()
+                .map(Producto::getPrecio)
+                .reduce(0, Integer::sum);
     }
 
     public void checkout(Pago metodoPago) {
         if (productos.isEmpty()) {
-            System.out.println("El carro de compra está vacío. No se puede procesar el pago.");
+            System.out.println("El carrito está vacío. No se puede realizar el pago.");
             return;
         }
         int total = calcularTotal();
         metodoPago.pago(total);
-
     }
 
     public void removerProductoPorNombre(String nombre) {
         productos.removeIf(producto -> producto.getNombre().equalsIgnoreCase(nombre));
-        System.out.println("Producto con nombre " + nombre + " removido del carro de compra.");
+        System.out.println("Producto con nombre '" + nombre + "' removido del carrito.");
     }
 
     public void mostrarProductos() {
         if (productos.isEmpty()) {
-            System.out.println("El carro de compra está vacío.");
+            System.out.println("El carrito está vacío.");
             return;
         }
-        System.out.println("Productos en el carro de compra:");
-        productos.forEach(producto -> System.out.println("- " + producto.getNombre() + ": " + producto.getPrecio()));
-
+        System.out.println("Productos en el carrito:");
+        productos.forEach(producto
+                -> System.out.println("- " + producto.getNombre() + ": " + producto.getPrecio())
+        );
         int total = calcularTotal();
-        System.out.println("Total a pagar: " + total);
+        System.out.println("Total: " + total);
     }
-
 }
